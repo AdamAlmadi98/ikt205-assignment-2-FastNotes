@@ -17,6 +17,9 @@ class _LoginPageState extends State<LoginPage> {
   bool loading = false;
 
 
+String? emailError;
+String? passwordError;
+
 @override
 void dispose() {
   emailCtrl.dispose();
@@ -27,12 +30,25 @@ void dispose() {
 Future<void> login() async {
   if (loading) return;
 
+  
+
+  final email = emailCtrl.text.trim();
+final password = passwordCtrl.text;
+
+if (email.isEmpty || password.isEmpty) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Ingen av feltene kan være tomme')),
+  );
+  return;
+}
+
   setState(() => loading = true);
+
 
   try {
     final res = await Supabase.instance.client.auth.signInWithPassword(
-      email: emailCtrl.text.trim(),
-      password: passwordCtrl.text,
+      email: email,
+      password: password,
     );
 
     if (!mounted) return;
